@@ -47,11 +47,13 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
+import java.util.stream.Collectors;
 
 class Module extends ClassLoader {
 
@@ -136,6 +138,10 @@ class Module extends ClassLoader {
             out.close();
             byte[] classBytes = out.toByteArray();
             String className = resourceToClassName(relativePath);
+            if(className.startsWith("BOOT-INF.classes."))
+            {
+            	className=className.replace("BOOT-INF.classes.", "");
+            }
             addToByteCache(className, classBytes);
         }
     }
@@ -174,7 +180,16 @@ class Module extends ClassLoader {
     @Override
     public Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
         synchronized (getClassLoadingLock(name)) {
-            Class<?> found = findLoadedClass(name);
+        	Class<?> found =null;
+        	 try {
+        	        found=getParent().getParent().loadClass(name);
+        	      }catch(Throwable e) {
+        	        	
+        	 }
+        	 if (found != null) {
+                 return found;
+             }
+            found = findLoadedClass(name);
             if (found != null) {
                 return found;
             }
@@ -260,4 +275,9 @@ class Module extends ClassLoader {
     public String toString() {
         return "Module{" + "name='" + name + '\'' + '}';
     }
+
+	public List<String> listAllClass() {
+		// TODO Auto-generated method stub
+		return byteCache.keySet().stream().collect(Collectors.toList());
+	}
 }

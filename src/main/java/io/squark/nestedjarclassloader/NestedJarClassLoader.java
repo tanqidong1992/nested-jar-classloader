@@ -40,6 +40,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -96,6 +97,11 @@ public class NestedJarClassLoader extends ClassLoader {
         }
         if (name.startsWith("java.")) {
             found = getSystemClassLoader().loadClass(name);
+        }
+        try {
+        found=getSystemClassLoader().loadClass(name);
+        }catch(Throwable e) {
+        	
         }
         if (found == null) {
             found = findModuleClass(name, resolve);
@@ -167,5 +173,10 @@ public class NestedJarClassLoader extends ClassLoader {
             Module unloaded = modules.remove(loggingModuleName);
             unloaded.cleanUp();
         }
+    }
+    
+    public List<String> listAllClass(String moduleName){
+    	Module module=modules.get(moduleName);
+    	return module.listAllClass();
     }
 }
