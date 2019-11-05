@@ -111,7 +111,7 @@ class Module extends ClassLoader {
             throw new IllegalStateException("Cannot add classes directly");
         } else {
             try {
-                addDirectory(new File(url.toURI()));
+                addDirectory(new File(url.toURI()),new File(url.toURI()));
             } catch (URISyntaxException e) {
                 throw new IllegalStateException(e);
             }
@@ -146,7 +146,7 @@ class Module extends ClassLoader {
         }
     }
 
-    private void addDirectory(File directory) throws IOException {
+    private void addDirectory(File classpath,File directory) throws IOException {
         if (!directory.isDirectory()) {
             throw new IllegalStateException("Not a directory: " + directory);
         }
@@ -156,7 +156,7 @@ class Module extends ClassLoader {
         }
         for (File file : files) {
             if (file.isDirectory()) {
-                addDirectory(file);
+                addDirectory(classpath,file);
             } else if (file.getName().endsWith(".jar")) {
                 try {
                     addResource0(file.toURI().toURL());
@@ -165,7 +165,7 @@ class Module extends ClassLoader {
                 }
             } else {
                 try {
-                    String relativeName = directory.toURI().relativize(file.toURI()).getPath();
+                    String relativeName = classpath.toURI().relativize(file.toURI()).getPath();
                     FileInputStream fileInputStream = new FileInputStream(file);
                     addClassIfClass(fileInputStream, relativeName);
                     resources.put(relativeName, file.toURI().toURL());
