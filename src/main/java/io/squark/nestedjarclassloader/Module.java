@@ -138,6 +138,7 @@ class Module extends ClassLoader {
             out.close();
             byte[] classBytes = out.toByteArray();
             String className = resourceToClassName(relativePath);
+            //support Spring Boot Flat Jar
             if(className.startsWith("BOOT-INF.classes."))
             {
             	className=className.replace("BOOT-INF.classes.", "");
