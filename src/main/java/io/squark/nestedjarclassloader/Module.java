@@ -281,4 +281,8 @@ class Module extends ClassLoader {
 		// TODO Auto-generated method stub
 		return byteCache.keySet().stream().collect(Collectors.toList());
 	}
+	
+	public byte[] getClassByteCache(String name) {
+		return  byteCache.get(name);
+	}
 }

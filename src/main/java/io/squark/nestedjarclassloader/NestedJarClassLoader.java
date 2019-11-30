@@ -179,4 +179,9 @@ public class NestedJarClassLoader extends ClassLoader {
     	Module module=modules.get(moduleName);
     	return module.listAllClass();
     }
+    
+	public byte[] getClassByteCache(String moduleName,String className) {
+		Module module=modules.get(moduleName);
+		return module.getClassByteCache(className);
+	}
 }
